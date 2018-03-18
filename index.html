@@ -1,0 +1,198 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+    <title>甑子岩</title>
+    <style>
+        @import url(./Cesium/Widgets/widgets.css);
+        @import url(./main/main.css);
+        @import url(./plugin/jquery/jquery-ui.css);
+    </style>
+    <script src="./plugin/jquery/jquery-1.12.4.js"></script>
+    <script src="./plugin/jquery/jquery-ui.js"></script>
+    <script src="./Cesium/Cesium.js"></script>
+    <script src="./plugin/navigation/viewerCesiumNavigationMixin.min.js"></script>
+    <script src="./plugin/navigation/SpirographPositionProperty.js"></script>
+    <script>
+        $(function () {
+            $("#accordion").accordion();
+        });
+    </script>
+</head>
+<body id="map">
+    <!--标题-->
+    <div id="title">甑子岩三维模型</div>
+
+    <!--地图-->
+    <div id="cesiumContainer"></div>
+
+    <!--功能开关-->
+    <button id="openmenu" title="显示功能面板" onclick="openMenu()">▶</button>
+    <!--功能-->
+    <div id="menu">
+        <div id="accordion">
+            <h3 onclick="cLealResult()">定位</h3>
+            <div>
+                <div style="padding: 5px 2px 5px 2px; border: 1px solid #FFFFFF; border-radius: 5px;">
+                    <input id="ddzb" type="checkbox" checked="checked" style="vertical-align: middle; width: 18px; height: 18px" onchange="selectDDZB()" />
+                    <input type="text" value="大地坐标" readonly="readonly" style="background-color: rgba(255,255,255,0); border: 0px; vertical-align: middle; text-decoration: none; width: 100px; font: 15px/100% 'Microsoft yahei'; text-shadow: 0 1px 1px rgba(0,0,0,.3);" /><br />
+                    &nbsp;&nbsp;<input type="text" value="经度" readonly="readonly" style="background-color: rgba(255,255,255,0); border: 0px; width: 45px; vertical-align: middle; text-decoration: none; font: 15px/100% 'Microsoft yahei'; text-shadow: 0 1px 1px rgba(0,0,0,.3);" />
+                    <input id="ddzbL" type="text" style="width: 150px; vertical-align: middle; text-overflow: ellipsis; height: 12px;" /><br />
+                    &nbsp;&nbsp;<input type="text" value="纬度" readonly="readonly" style="background-color: rgba(255,255,255,0); border: 0px; width: 45px; vertical-align: middle; text-decoration: none; font: 15px/100% 'Microsoft yahei'; text-shadow: 0 1px 1px rgba(0,0,0,.3);" />
+                    <input id="ddzbB" type="text" style="width: 150px; vertical-align: middle; text-overflow: ellipsis; height: 12px;" /><br />
+                    &nbsp;&nbsp;<input type="text" value="高程" readonly="readonly" style="background-color: rgba(255,255,255,0); border: 0px; width: 45px; vertical-align: middle; text-decoration: none; font: 15px/100% 'Microsoft yahei'; text-shadow: 0 1px 1px rgba(0,0,0,.3);" />
+                    <input id="ddzbH" type="text" style="width: 150px; vertical-align: middle; text-overflow: ellipsis; height: 12px;" /><br />
+                </div>
+
+                <br />
+
+                <div style="padding: 5px 2px 5px 2px; border: 1px solid #FFFFFF; border-radius: 5px;">
+                    <input id="pmzb" type="checkbox" style="vertical-align: middle; width: 18px; height: 18px" onchange="selectPMZB()" /><input type="text" value="平面直角坐标" readonly="readonly" style="background-color: rgba(255,255,255,0); border: 0px; vertical-align: middle; text-decoration: none; width: 100px; font: 15px/100% 'Microsoft yahei'; text-shadow: 0 1px 1px rgba(0,0,0,.3);" /><br />
+                    &nbsp;&nbsp;<input type="text" value="x坐标" readonly="readonly" style="background-color: rgba(255,255,255,0); border: 0px; width: 45px; vertical-align: middle; text-decoration: none; font: 15px/100% 'Microsoft yahei'; text-shadow: 0 1px 1px rgba(0,0,0,.3);" /><input id="pmzbx" type="text" disabled="disabled" style="width: 150px; vertical-align: middle; text-overflow: ellipsis; height: 12px;" /><br />
+                    &nbsp;&nbsp;<input type="text" value="y坐标" readonly="readonly" style="background-color: rgba(255,255,255,0); border: 0px; width: 45px; vertical-align: middle; text-decoration: none; font: 15px/100% 'Microsoft yahei'; text-shadow: 0 1px 1px rgba(0,0,0,.3);" /><input id="pmzby" type="text" disabled="disabled" style="width: 150px; vertical-align: middle; text-overflow: ellipsis; height: 12px;" /><br />
+                    &nbsp;&nbsp;<input type="text" value="高程" readonly="readonly" style="background-color: rgba(255,255,255,0); border: 0px; width: 45px; vertical-align: middle; text-decoration: none; font: 15px/100% 'Microsoft yahei'; text-shadow: 0 1px 1px rgba(0,0,0,.3);" /><input id="pmzbh" type="text" disabled="disabled" style="width: 150px; vertical-align: middle; text-overflow: ellipsis; height: 12px;" /><br />
+                </div>
+
+                <br />
+
+                <div style="padding: 5px 2px 5px 2px; border: 1px solid #FFFFFF; border-radius: 5px;">
+                    <input id="gc" type="checkbox" style="vertical-align: middle; width: 18px; height: 18px" onchange="selectGC()" /><input type="text" value="高程面" readonly="readonly" style="background-color: rgba(255,255,255,0); border: 0px; vertical-align: middle; text-decoration: none; width: 100px; font: 15px/100% 'Microsoft yahei'; text-shadow: 0 1px 1px rgba(0,0,0,.3);" /><br />
+                    &nbsp;&nbsp;<input type="text" value="高程" readonly="readonly" style="background-color: rgba(255,255,255,0); border: 0px; width: 45px; vertical-align: middle; text-decoration: none; font: 15px/100% 'Microsoft yahei'; text-shadow: 0 1px 1px rgba(0,0,0,.3);" /><input id="gcH" type="text" disabled="disabled" style="width: 150px; vertical-align: middle; text-overflow: ellipsis; height: 12px;" />
+                </div>
+
+                <br />
+
+                <div>
+                    &nbsp;&nbsp;
+                        <button class="button white medium" onclick="dispalyPosition()">定位</button>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <button class="button white medium" onclick="clearPosition()">清空</button>
+                </div>
+
+            </div>
+
+            <h3>量测</h3>
+            <div>
+                <img src="img/draw/position.png" width="24" height="24" style="vertical-align: middle" />&nbsp;&nbsp;
+                <button onclick="pointMeasure()" class="button white medium">坐标量测</button><br />
+                <br />
+                <img src="img/draw/distance.png" width="24" height="24" style="vertical-align: middle" />&nbsp;&nbsp;
+                <button onclick="distanceMeasure()" class="button white medium">距离量测</button><br />
+                <br />
+                <img src="img/draw/height.png" width="24" height="24" style="vertical-align: middle" />&nbsp;&nbsp;
+                <button onclick="heightMeasure()" class="button white medium">高度量测</button><br />
+                <br />
+                <img src="img/draw/area.png" width="24" height="24" style="vertical-align: middle" />&nbsp;&nbsp;
+                <button onclick="areaMeasure()" class="button white medium">面积量测</button><br />
+                <br />
+                <!--<img src="img/draw/area1.png" width="24" height="24" style="vertical-align: middle" />&nbsp;&nbsp;
+                <button onclick="azimuthMeasure()" class="button white medium">方位角量测</button><br />
+                <br />-->
+                <img src="img/draw/remove.png" width="24" height="24" style="vertical-align: middle" />&nbsp;&nbsp;
+                <button onclick="cLealResult()" class="button white medium">清除结果</button><br />
+            </div>
+
+            <h3 onclick="cLealResult()">点标注</h3>
+            <div style="max-height: 500px">
+                <div id="pointpic" style="padding: 5px 2px 5px 2px; border: 1px solid #FFFFFF; border-radius: 5px;" onclick="getPointStyle(event)">
+                    &nbsp;<img id="p1" src="img/label/p1.png" style="vertical-align: middle;" width="36" height="36" />
+                    <img id="p2" src="img/label/p2.png" style="vertical-align: middle" width="36" height="36" />
+                    <img id="p3" src="img/label/p3.png" style="vertical-align: middle" width="36" height="36" />
+                    <img id="p4" src="img/label/p4.png" style="vertical-align: middle" width="36" height="36" />
+                    <img id="p5" src="img/label/p5.png" style="vertical-align: middle" width="36" height="36" /><br />
+                    &nbsp;<img id="p6" src="img/label/p6.png" style="vertical-align: middle" width="36" height="36" />
+                    <img id="p7" src="img/label/p7.png" style="vertical-align: middle" width="36" height="36" />
+                    <img id="p8" src="img/label/p8.png" style="vertical-align: middle" width="36" height="36" />
+                    <img id="p9" src="img/label/p9.png" style="vertical-align: middle" width="36" height="36" />
+                    <img id="p10" src="img/label/p10.png" style="vertical-align: middle" width="36" height="36" /><br />
+                    &nbsp;<img id="p11" src="img/label/p11.png" style="vertical-align: middle" width="36" height="36" />
+                    <img id="p12" src="img/label/p12.png" style="vertical-align: middle" width="36" height="36" />
+                    <img id="p13" src="img/label/p13.png" style="vertical-align: middle" width="36" height="36" />
+                    <img id="p14" src="img/label/p14.png" style="vertical-align: middle" width="36" height="36" />
+                    <img id="p15" src="img/label/p15.png" style="vertical-align: middle" width="36" height="36" />
+                </div>
+
+                <br />
+
+                <div>
+                    &nbsp;&nbsp;
+                        <button class="button white medium" onclick="addPointLabel()">添加</button>
+                    &nbsp;&nbsp;&nbsp;
+                        <button class="button white medium" onclick="deleteAllPointLabel()">清空</button>
+                </div>
+
+                <br />
+
+                <div id="pointLabel" onclick="deletePointLabel(event)" onkeydown="modiftyPointLabel(event)"></div>
+            </div>
+
+            <h3 onclick="cLealResult()">线标注</h3>
+            <div style="max-height: 500px">
+                <div style="padding: 5px 2px 5px 2px; border: 1px solid #FFFFFF; border-radius: 5px;">
+                    <div onclick="getLineStyle(event)">
+                        &nbsp;<img id="l0" src="img/label/l1.png" style="border: 2px solid #008000; vertical-align: middle" width="32" height="32" />
+                        &nbsp;&nbsp;&nbsp;
+                        <img id="l1" src="img/label/l1.png" style="vertical-align: middle" width="32" height="32" />
+                        <img id="l2" src="img/label/l2.png" style="vertical-align: middle" width="32" height="32" />
+                        <img id="l3" src="img/label/l3.png" style="vertical-align: middle" width="32" height="32" />
+                        <img id="l4" src="img/label/l4.png" style="vertical-align: middle" width="32" height="32" />
+                    </div>
+                    <br />
+                    &nbsp;&nbsp;<input type="text" value="颜色" readonly="readonly" style="background-color: rgba(255,255,255,0); border: 0px; width: 40px; vertical-align: middle; text-decoration: none; font: 15px/100% 'Microsoft yahei'; text-shadow: 0 1px 1px rgba(0,0,0,.3);" /><input id="linecolor" type="color" style="background-color: rgba(255,255,255,0); border: 0px; width: 40px; vertical-align: middle;" value="#00FFFF" />
+                    <input type="text" value="宽度" readonly="readonly" style="background-color: rgba(255,255,255,0); border: 0px; width: 40px; vertical-align: middle; text-decoration: none; font: 15px/100% 'Microsoft yahei'; text-shadow: 0 1px 1px rgba(0,0,0,.3);" /><input id="linewidth" type="number" min="1" max="10" step="1" value="1" style="width: 40px; background-color: #fff; vertical-align: middle; height: 12px;" />
+                </div>
+
+                <br />
+
+                <div>
+                    &nbsp;&nbsp;
+                        <button class="button white medium" onclick="addLineLabel()">添加</button>
+                    &nbsp;&nbsp;&nbsp;
+                        <button class="button white medium" onclick="deleteAllLineLabel()">清空</button>
+                </div>
+
+                <br />
+
+                <div id="lineLabel" onclick="deleteLineLabel(event)" onkeydown="modiftyLineLabel(event)"></div>
+            </div>
+
+            <h3 onclick="cLealResult()">面标注</h3>
+            <div style="max-height: 500px">
+                <div style="padding: 5px 2px 5px 2px; border: 1px solid #FFFFFF; border-radius: 5px;">
+                    &nbsp;&nbsp;<input type="text" value="颜色" readonly="readonly" style="background-color: rgba(255,255,255,0); border: 0px; width: 40px; vertical-align: middle; text-decoration: none; font: 15px/100% 'Microsoft yahei'; text-shadow: 0 1px 1px rgba(0,0,0,.3);" /><input id="areacolor" type="color" style="background-color: rgba(255,255,255,0); border: 0px; width: 40px; vertical-align: middle" value="#00FFFF" />
+                    <input type="text" value="透明" readonly="readonly" style="background-color: rgba(255,255,255,0); border: 0px; width: 45px; vertical-align: middle; text-decoration: none; font: 15px/100% 'Microsoft yahei'; text-shadow: 0 1px 1px rgba(0,0,0,.3);" /><input id="areatransparency" type="number" min="0" max="1" step="0.1" value="0.5" style="width: 50px; background-color: #fff; vertical-align: middle; height: 12px;" />
+                </div>
+
+                <br />
+
+                <div>
+                    &nbsp;&nbsp;
+                        <button class="button white medium" onclick="addAreaLabel()">添加</button>
+                    &nbsp;&nbsp;&nbsp;
+                        <button class="button white medium" onclick="deleteAllAreaLabel()">清空</button>
+                </div>
+
+                <br />
+
+                <div id="areaLabel" onclick="deleteAreaLabel(event)" onkeydown="modiftyAreaLabel(event)"></div>
+            </div>
+
+        </div>
+    </div>
+
+    <!--鹰眼开关-->
+    <button id="openoverview" title="显示鹰眼视图" onclick="openOverview()">▲</button>
+    <!--鹰眼-->
+    <div id="overview"></div>
+
+    <!--图标-->
+    <a href="http://www.cqdk107.com/" target="_blank">
+        <img id="logo" title="重庆市地质矿产勘查开发局107地质队" alt="重庆市地质矿产勘查开发局107地质队" src="./img/logo/1073.png" />
+    </a>
+    <button>测试</button>
+
+    <script src="./main/main.js"></script>
+</body>
+</html>
